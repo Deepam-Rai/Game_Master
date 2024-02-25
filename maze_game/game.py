@@ -1,7 +1,13 @@
+import pygame
 from BaseClasses import BaseGame
-from utils import *
 from constants import *
+from .constants import *
 from .wilson import get_wilson_walls
+import logging
+import sys
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 
 class Game(BaseGame):

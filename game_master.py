@@ -2,26 +2,25 @@ import argparse
 from utils import *
 import os
 
-from maze_game import Game
-
-parser = argparse.ArgumentParser(description="Game Master.")
-parser.add_argument('--game', type=str, help="Python file that has game class.")
-parser.add_argument('--player', type=str, help="Python file that has player class.")
+parser = argparse.ArgumentParser(description="Game Master. Controls the game loop. Can take different games and players as form of python modules. Base classes for Game and Player are defined inside 'BaseClasses' module.")
+parser.add_argument('--game', type=str, help="Python module that has 'Game' class. Should also contain `win_configs.py` file that defines constants WIN_HEIGHT, WIN_WIDTH, WIN_TITLE, WIN_COLOR, WIN_ICON.")
+parser.add_argument('--player', type=str, help="Python module that has 'Player' class.")
 args = parser.parse_args()
-logging.debug(f'Game file: {args.game}  Player file: {args.player}')
+logging.debug(f'Game module: {args.game}  Player module: {args.player}')
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
+import pygame
 from constants import *
 
 num_pass, num_fail = pygame.init()
 logging.debug(f'Pygame modules initialized - success:{num_pass}  fail:{num_fail}')
 
-
-screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-screen.fill(WIN_COLOR)
-pygame.display.set_caption(WIN_TITLE)
-icon = pygame.image.load('./assets/images/icon.jpg')
+win_configs = import_constants(module_name=args.game)
+screen = pygame.display.set_mode((win_configs["WIN_WIDTH"], win_configs["WIN_HEIGHT"]))
+screen.fill(win_configs["WIN_COLOR"])
+pygame.display.set_caption(win_configs["WIN_TITLE"])
+icon = pygame.image.load(win_configs["WIN_ICON"])
 pygame.display.set_icon(icon)
 pygame.display.flip()
 
@@ -39,7 +38,7 @@ while game.state == RUNNING:
     if player_move is not None:
         game.update(player_move)
         player.update(player_move, game.get_player_env())
-    screen.fill(WIN_COLOR)
+    screen.fill(win_configs["WIN_COLOR"])
     game.draw(surface=screen)
     player.draw(surface=screen)
     pygame.display.flip()

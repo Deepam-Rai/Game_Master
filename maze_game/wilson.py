@@ -1,4 +1,4 @@
-from constants import *
+from .constants import *
 import random
 import logging
 import sys
@@ -175,6 +175,11 @@ def get_walls(maze):
 
 
 def get_wilson_walls(dims):
+    """
+    Returns coordinates of walls of maze created using wilson algorithm.
+    :param dims:
+    :return: [(,),(,)...] tuples of walls coordinates as list.
+    """
     #TODO: remove need of halving the dims
     wilson_walks = wilson_algo([(dims[0]-1)//2, (dims[1]-1)//2])
     maze = get_walled_cells(dims)

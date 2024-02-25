@@ -1,10 +1,13 @@
+import pygame
 from BaseClasses import BasePlayer
-from utils import *
+from .utils import *
+from .constants import *
 import logging
 import sys
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
+
 
 class Player(BasePlayer):
     def __init__(self, init_pos = (2, 2)):
@@ -37,7 +40,6 @@ class Player(BasePlayer):
             }
         :return: True if change in position else false
         """
-        logger.debug(f'Player moved: {move}')
         row = self.row
         col = self.col
         if move == UP:
@@ -54,17 +56,15 @@ class Player(BasePlayer):
         self.col = col
         return True
 
-
     def update(self, move, env):
         moved = self.move(move, env)
-        logging.debug(f'{self.row, self.col}')
         return moved
 
     def draw(self, surface):
         row = self.row
         col = self.col
-        pygame.draw.rect(surface, HEAD_BORDER,
+        pygame.draw.rect(surface, PLAYER_BORDER,
                          pygame.Rect(col * BLOCK_SIZE, row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
-        pygame.draw.rect(surface, HEAD_COLOR,
+        pygame.draw.rect(surface, PLAYER_COLOR,
                          pygame.Rect(col * BLOCK_SIZE + 4, row * BLOCK_SIZE + 4, BLOCK_SIZE - 8,
                                      BLOCK_SIZE - 8))
