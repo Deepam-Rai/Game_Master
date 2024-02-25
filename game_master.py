@@ -24,22 +24,23 @@ icon = pygame.image.load(win_configs["WIN_ICON"])
 pygame.display.set_icon(icon)
 pygame.display.flip()
 
-
+clock = pygame.time.Clock()
 Game = import_class(module_name=args.game, class_name="Game")
 Player = import_class(module_name=args.player, class_name="Player")
 game = Game()
-player = Player()
+player = Player(game_init_det = game.get_game_init_det())
 while game.state == RUNNING:
     player_move = None
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game.state = QUIT
         player_move = player.event_parse(event)
-    if player_move is not None:
-        game.update(player_move)
-        player.update(player_move, game.get_player_env())
+    player.update(player_move, game.get_player_env())
+    game.update(player_checks=player.get_player_checks())
     screen.fill(win_configs["WIN_COLOR"])
     game.draw(surface=screen)
     player.draw(surface=screen)
     pygame.display.flip()
+    clock.tick(game.tick)
+logger.debug(f'Game state: {game.state}')
 pygame.display.quit()

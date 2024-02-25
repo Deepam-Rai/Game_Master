@@ -10,24 +10,27 @@ logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 
 class Player(BasePlayer):
-    def __init__(self, init_pos = (2, 2)):
+    def __init__(self, game_init_det):
         """
         #TODO init of positions.
-        :init_pos: (row, col) initial position of player
+        :arg game_init_details: Provides "start_point" of the player in the maze.
         """
         super().__init__()
-        self.row, self.col = init_pos
+        self.row, self.col = game_init_det["start_point"]
+        self.moving = STILL
         logger.debug(f'Player object created.')
 
     def event_parse(self, event):
-        mapping = {
+        dir_map = {
             pygame.K_UP: UP,
             pygame.K_RIGHT: RIGHT,
             pygame.K_DOWN: DOWN,
             pygame.K_LEFT: LEFT,
         }
         if event.type == pygame.KEYDOWN:
-            return mapping.get(event.key, None)
+            return dir_map.get(event.key, None)
+        if event.type == pygame.KEYUP:
+            return STILL
 
     def move(self, move, env):
         """
@@ -40,15 +43,16 @@ class Player(BasePlayer):
             }
         :return: True if change in position else false
         """
+        self.moving = move if move in [UP, RIGHT, DOWN, LEFT, STILL] else self.moving
         row = self.row
         col = self.col
-        if move == UP:
+        if self.moving == UP:
             row -=1
-        if move == RIGHT:
+        if self.moving == RIGHT:
             col +=1
-        if move == DOWN:
+        if self.moving == DOWN:
             row +=1
-        if move == LEFT:
+        if self.moving == LEFT:
             col -=1
         if out_of_bound(env["dims"], (row, col)) or (row, col) in env["walls"]:
             return False
@@ -59,6 +63,18 @@ class Player(BasePlayer):
     def update(self, move, env):
         moved = self.move(move, env)
         return moved
+
+    def get_player_checks(self):
+        """
+        For the game to check if its game over.
+        :return: {
+                    "position": (,) players curent position.
+                 }
+        """
+        payload = {
+            "position": (self.row, self.col)
+        }
+        return payload
 
     def draw(self, surface):
         row = self.row
