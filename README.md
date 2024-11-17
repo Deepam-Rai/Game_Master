@@ -9,8 +9,14 @@
 ----
 
 # Running
-Maze Game:
+### Maze Game:
 ```commandline
 python main.py --game maze_game --player maze_game
 ```
 `maze_game` module can be replaced.
+
+
+
+https://github.com/user-attachments/assets/78d6e589-6cbd-4507-bd3b-a12f382b705c
+
+
